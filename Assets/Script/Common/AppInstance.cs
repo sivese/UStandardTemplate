@@ -2,17 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AppInstance : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+using Std.Common.Pattern;
 
-    // Update is called once per frame
-    void Update()
+namespace Std.Common
+{
+    public abstract class AppInstance : Singleton<AppInstance>
     {
-        
+
     }
 }
