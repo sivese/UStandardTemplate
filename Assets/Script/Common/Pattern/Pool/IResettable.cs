@@ -1,18 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class IResettable : MonoBehaviour
+namespace Std.Common.Pattern
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    using System;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public interface IResettable { void Reset(); }
 }

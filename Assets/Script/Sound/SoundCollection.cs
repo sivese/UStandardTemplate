@@ -2,17 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoundCollection : MonoBehaviour
+namespace Std.Sound
 {
-    // Start is called before the first frame update
-    void Start()
+    [CreateAssetMenu(fileName = "SoundCollection", menuName = "Scriptable Object/ SoundCollection", order = int.MaxValue)]
+    public class SoundCollection : ScriptableObject
     {
-        
-    }
+        [SerializeField]
+        public List<BgmGroupData> bgmGroups;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        [SerializeField]
+        public List<SoundGroupData> soundGroups;
     }
 }
