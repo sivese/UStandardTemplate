@@ -463,7 +463,27 @@ namespace Std.Collection.Tree
             {
                 (E Element, P Priority) minChild = nodes[i];
                 var minChildIndex = i;
+
+                var childIndexUpperBound = Math.Min(i + Arity, size);
+
+                while(++i < childIndexUpperBound)
+                {
+                    (E Element, P Priority) nextChild = nodes[i];
+
+                    if(comparer.Compare(nextChild.Priority, minChild.Priority) < 0)
+                    {
+                        minChild = nextChild;
+                        minChildIndex = i;
+                    }
+                }
+
+                if (comparer.Compare(node.Priority, minChild.Priority) <= 0) break;
+
+                nodes[nodeIndex] = minChild;
+                nodeIndex = minChildIndex;
             }
+
+            nodes[nodeIndex] = node;
         }
 
         private static IComparer<P>? InitializeComparer(IComparer<P>? comparer)
