@@ -218,7 +218,7 @@ namespace Std.Sound
             });
         }
 
-        public AudioClipData PlaySound(SoundType type, int index = 0, float volume = 1f, int createCount = ObjectPool.createCount)
+        public AudioClipData PlaySound(SoundType type, int index = 0, float volume = 1f, int createCount = ObjectPool.CREATE_COUNT)
         {
             var name = type.ToString();
 
@@ -239,14 +239,65 @@ namespace Std.Sound
 
             if (soundPool == null)
             {
-                soundPool = new ObjectPool(this.SoundSource.gameObject, gameObject, createCount);
+                soundPool = new ObjectPool
+                (
+                    prefab : SoundSource.gameObject, 
+                    parent : gameObject, 
+                    count : createCount
+                ); //prefab, parent, count
             }
 
-            soundPool.GetObject().GetComponent<Sound>().Play(sound.clip, volume);
+            soundPool.GetObject()
+                .GetComponent<Sound>()
+                .Play(sound.clip, volume);
 
             return sound;
         }
 
+        public AudioClipData PlayRandomSound(SoundType type, float volume = 1f, int createCount = ObjectPool.CREATE_COUNT)
+        {
+            return PlayRandomSound(type.ToString(), volume, createCount);
+        }
 
+        public AudioClipData PlayRandomSound(string name, float volume = 1f, int createCount = ObjectPool.CREATE_COUNT)
+        {
+            if (sounds == null)
+            {
+                Debug.LogWarning("Please add a " + name + " sound");
+                return null;
+            }
+
+            var soundGroup = sounds.FindAll(x => x.name == name);
+            var sound = soundGroup.Count > 0 ? soundGroup[Random.Range(0, soundGroup.Count)] : null;
+
+            if (sound == null || sound.clip == null)
+            {
+                //Debug.LogWarning("Please add a " + name + " sound");
+                return null;
+            }
+
+            if (soundPool == null)
+            {
+                soundPool = new ObjectPool(this.SoundSource.gameObject, gameObject, createCount);
+            }
+
+            soundPool.GetObject()
+                .GetComponent<Sound>()
+                .Play(sound.clip, volume);
+
+            return sound;
+        }
+
+        public List<AudioClipData> GetSounds() => sounds;
+
+        public void StopSound()
+        {
+            var sounds = gameObject.GetComponentsInChildren<Sound>();
+
+            for (int i = 0; i < sounds.Length; i++)
+            {
+                sounds[i].gameObject.SetActive(false);
+            }
+        }
     }
 }

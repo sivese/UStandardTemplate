@@ -39,6 +39,12 @@ namespace Std.Common.Pattern
             return newMember;
         }
 
+        public void Release(T member)
+        {
+            member.Reset();
+            unavailable.Remove(member);
+        }
+
         private T Create()
         {
             members.Add(factory.Create());

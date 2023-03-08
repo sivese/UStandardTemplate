@@ -2,17 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Factory : MonoBehaviour
+namespace Std.Common.Pattern
 {
-    // Start is called before the first frame update
-    void Start()
+    public class Factory<T> : IFactory<T> where T : new()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        public T Create() => new T();
     }
 }
