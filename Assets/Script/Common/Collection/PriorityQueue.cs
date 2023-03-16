@@ -508,25 +508,96 @@ namespace Std.Collection.Tree
             internal UnorderedItemsCollection(PriorityQueue<E, P> queue) => this.queue = queue;
 
             public int Count => queue.size;
+            object ICollection.SyncRoot => this;
+            bool ICollection.IsSynchronized => false;
+
+            void ICollection.CopyTo(Array array, int index)
+            {
+                if(array == null) throw new ArgumentNullException("array");
+
+                if (array.Rank != 1) throw new ArgumentException();
+
+                if (array.GetLowerBound(0) != 0) throw new ArgumentException();
+
+                if (index < 0 || index > array.Length) throw new ArgumentOutOfRangeException();
+
+                if (array.Length - index < queue.size) throw new ArgumentException();
+
+                try
+                {
+                    Array.Copy(queue.nodes, 0, array, index, queue.size);
+                }
+                catch(ArrayTypeMismatchException)
+                {
+                    throw new ArgumentException();
+                }
+            }
 
             public bool IsSynchronized => throw new NotImplementedException();
 
             public object SyncRoot => throw new NotImplementedException();
 
-            public void CopyTo(Array array, int index)
+            public struct Enumerator : IEnumerator<(E Element, P Priority)>
             {
-                throw new NotImplementedException();
+                private readonly PriorityQueue<E, P> queue;
+                private readonly int version;
+                private int index;
+                private (E, P) current;
+
+                internal Enumerator(PriorityQueue<E, P> queue)
+                {
+                    this.queue = queue;
+                    index = 0;
+                    version = queue.version;
+                    current = default;
+                }
+
+                public void Dispose() { }
+
+                public bool MoveNext()
+                {
+                    var localQueue = queue;
+
+                    if(version == localQueue.version && ((uint) index < (uint) localQueue.size))
+                    {
+                        current = localQueue.nodes[index];
+                        index++;
+
+                        return true;
+                    }
+
+                    return MoveNextRare();
+                }
+
+                private bool MoveNextRare()
+                {
+                    if(version != queue.version) throw new InvalidOperationException();
+
+                    index = queue.size + 1;
+                    current = default;
+
+                    return false;
+                }
+
+                public (E Element, P Priority) Current => current;
+                object IEnumerator.Current => current;
+
+                void IEnumerator.Reset()
+                {
+                    if (version != queue.version) throw new InvalidOperationException();
+
+                    index = 0;
+                    current = default;
+                }
             }
 
-            public IEnumerator<(E Element, P Priority)> GetEnumerator()
-            {
-                throw new System.NotImplementedException();
-            }
+            public Enumerator GetEnumerator() => new Enumerator(queue);
 
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                throw new System.NotImplementedException();
-            }
+            IEnumerator<(E Element, P Priority)> IEnumerable<(E Element, P Priority)>.GetEnumerator() =>
+            queue.Count == 0 ? EnumerableHelpers.GetEmptyEnumerator<(E Element, P Priority)>() :
+            GetEnumerator();
+
+            IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable<(E Element, P Priority)>) this).GetEnumerator();
         }
     }
 

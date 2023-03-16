@@ -11,6 +11,8 @@ namespace Std.Collection.Generic
 {
     internal static partial class EnumerableHelpers
     {
+        internal static IEnumerator<T> GetEmptyEnumerator<T>() => ((IEnumerable<T>)Array.Empty<T>()).GetEnumerator();
+
         internal static void Copy<T>(IEnumerable<T> source, T[] array, int arrayIndex, int count)
         {
             Debug.Assert(source != null);

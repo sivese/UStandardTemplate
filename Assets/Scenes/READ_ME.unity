@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3689b8612b67af148a6c363893cc6034, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  description: 
+  description: ' This is custom Unity project template.  '
   guiStyle:
     m_Name: 
     m_Normal:
