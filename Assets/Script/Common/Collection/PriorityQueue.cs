@@ -25,6 +25,8 @@ namespace Std.Collection.Tree
         private const int Arity = 4;
         private const int Log2Arity = 2;
 
+#region constructor
+
 #if DEBUG
         static PriorityQueue()
         {
@@ -37,10 +39,7 @@ namespace Std.Collection.Tree
             comparer = InitializeComparer(null);
         }
 
-        public PriorityQueue(int initialCapacity) : this(initialCapacity, comparer : null)
-        {
-
-        }
+        public PriorityQueue(int initialCapacity) : this(initialCapacity, comparer : null) { }
 
         public PriorityQueue(IComparer<P>? comparer)
         {
@@ -70,6 +69,7 @@ namespace Std.Collection.Tree
 
             if (size > 1) Heapify();
         }
+#endregion
 
         public int Count => size;
 
